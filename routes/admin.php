@@ -27,7 +27,7 @@ Route::get('/', function () {
 });
 
 // ownersのRouteを設定、middleware('auth:admin')で管理者でログインしてる場合のみ表示できるようにする
-Route::resouce('owners', OwnersController::class)
+Route::resource('owners', OwnersController::class)
 ->middleware('auth:admin');
 
 Route::get('/dashboard', function () {
