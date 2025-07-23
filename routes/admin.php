@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Auth\NewPasswordController;
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Admin\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\Auth\VerifyEmailController;
+use App\Http\Controllers\Admin\OwnersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,10 @@ use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 Route::get('/', function () {
     return view('admin.welcome');
 });
+
+// ownersのRouteを設定、middleware('auth:admin')で管理者でログインしてる場合のみ表示できるようにする
+Route::resouce('owners', OwnersController::class)
+->middleware('auth:admin');
 
 Route::get('/dashboard', function () {
     return view('admin.dashboard');
