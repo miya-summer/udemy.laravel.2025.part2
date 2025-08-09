@@ -82,7 +82,9 @@ class OwnersController extends Controller
         ]);
 
         // リダイレクト
-        return redirect()->route('admin.owners.index');
+        return redirect()
+            ->route('admin.owners.index')
+            ->with('message', 'オーナー登録を実施しました。');
     }
 
     /**
