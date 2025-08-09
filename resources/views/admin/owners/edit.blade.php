@@ -17,6 +17,7 @@
                             <div class="lg:w-1/2 md:w-2/3 mx-auto">
                                 <x-auth-validation-errors class="mb-4" :errors="$errors" />
                                 <form method="post" action="{{ route('admin.owners.update', ['owner' => $owner->id]) }}">
+                                    @method('PUT')
                                     @csrf
                                     <div class="-m-2">
                                         <div class="p-2 w-1/2 mx-auto">
