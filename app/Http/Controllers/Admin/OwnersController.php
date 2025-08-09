@@ -8,6 +8,7 @@ use App\Models\Owner;   // Eloquent エロクアント
 use Illuminate\Support\Facades\DB;  // QueryBuilder クエリビルダ
 use Carbon\Carbon;
 use Symfony\Component\HttpKernel\DataCollector\EventDataCollector;
+use Illuminate\Support\Facades\Hash;    // PWをhash化するため追加
 
 class OwnersController extends Controller
 {
@@ -66,7 +67,22 @@ class OwnersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // バリデーション
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:owners'],
+            'password' => ['required', 'string' ,'confirmed', 'min:8'],
+        ]);
+
+        // 保存処理
+        Owner::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // リダイレクト
+        return redirect()->route('admin.owners.index');
     }
 
     /**
