@@ -22,13 +22,13 @@ use App\Http\Controllers\Admin\OwnersController;
 |
 */
 
-Route::get('/', function () {
-    return view('admin.welcome');
-});
+//Route::get('/', function () {
+//    return view('admin.welcome');
+//});
 
 // ownersのRouteを設定、middleware('auth:admin')で管理者でログインしてる場合のみ表示できるようにする
 Route::resource('owners', OwnersController::class)
-->middleware('auth:admin');
+->middleware('auth:admin')->except(['show']);
 
 Route::prefix('expired-owners')->
     middleware('auth:admin')->group(function(){
