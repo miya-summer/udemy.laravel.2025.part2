@@ -7,6 +7,8 @@ use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage; // ファイルアップロード用
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ShopController extends Controller
 {
@@ -49,7 +51,18 @@ class ShopController extends Controller
         // 画像アップロード
         $imageFile = $request->image; //一時保存
         if(!is_null($imageFile) && $imageFile->isValid() ){
-            Storage::putFile('public/shops', $imageFile);
+            $fileName = uniqid(rand().'_');
+            $extension = $imageFile->extension();
+            $fileNameToStore = $fileName . '.' . $extension;
+
+            // 講座はIntervent Imageのv2なので、v3の書き方に変えてみた。もっとベストな方法があるかも！？
+            $manager = new ImageManager(new Driver());
+
+            $resizedImage = $manager->read($imageFile)
+                ->resize(1920, 1080)
+                ->encode();
+
+            Storage::put('public/shops/' . $fileNameToStore, $resizedImage);
         }
 
         return redirect()->route('owner.shops.index');
