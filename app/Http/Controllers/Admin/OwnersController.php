@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;  // QueryBuilder クエリビルダ
 use Carbon\Carbon;
 use Symfony\Component\HttpKernel\DataCollector\EventDataCollector;
 use Illuminate\Support\Facades\Hash;    // PWをhash化するため追加
+use Throwable;
+use Illuminate\Support\Facades\Log;
+use App\Models\Shop;
 
 class OwnersController extends Controller
 {
@@ -74,12 +77,27 @@ class OwnersController extends Controller
             'password' => ['required', 'string' ,'confirmed', 'min:8'],
         ]);
 
-        // 保存処理
-        Owner::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            DB::transaction(function () use($request) {
+                // 保存処理
+                $owner = Owner::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                ]);
+
+                Shop::create([
+                    'owner_id' => $owner->id,
+                    'name' => '店名を入力してください',
+                    'information' => '',
+                    'filename' => '',
+                    'is_selling' => true
+                ]);
+            }, 2);
+        } catch (Throwable $e) {
+          Log::error($e);
+          throw $e;
+        }
 
         // リダイレクト
         return redirect()
