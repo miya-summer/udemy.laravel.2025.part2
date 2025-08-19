@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage; // ファイルアップロード用
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use App\Http\Requests\UploadImageRequest;
 
 class ShopController extends Controller
 {
@@ -46,7 +47,7 @@ class ShopController extends Controller
         return view('owner.shops.edit', compact('shop'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UploadImageRequest $request, $id)
     {
         // 画像アップロード
         $imageFile = $request->image; //一時保存
