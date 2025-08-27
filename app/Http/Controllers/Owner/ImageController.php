@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Image;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UploadImageRequest;
+use App\Services\ImageService;
 
 class ImageController extends Controller
 {
@@ -14,12 +16,11 @@ class ImageController extends Controller
     {
         $this->middleware('auth:owners');
 
-        // ログインしたオーナーIDとショップのオーナーが同じかどうかチェックして、別のオーナーのショップを開こうとしたら、404になるように調整
         $this->middleware(function($request, $next){
             $id = $request->route()->parameter('image'); //shopのid取得
             if(!is_null($id)){ // null判定（indexページはパラメータがないので、not nullで判別）
-                $imageOwnerId = Image::findOrFail($id)->owner->id;
-                $imageId = (int)$imageOwnerId; // キャスト 文字列→数値に型変換
+                $imagesOwnerId = Image::findOrFail($id)->owner->id;
+                $imageId = (int)$imagesOwnerId; // キャスト 文字列→数値に型変換
                 if($imageId !== Auth::id()){ // 同じでなかったら
                     abort(404); // 404画面表示
                 }
@@ -49,7 +50,7 @@ class ImageController extends Controller
      */
     public function create()
     {
-        //
+        return view('owner.images.create');
     }
 
     /**
@@ -58,9 +59,9 @@ class ImageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UploadImageRequest $request)
     {
-        //
+        dd($request);
     }
 
     /**
