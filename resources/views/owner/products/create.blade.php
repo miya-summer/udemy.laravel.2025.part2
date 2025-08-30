@@ -33,6 +33,7 @@
                             <x-select-image :images="$images" name="image2" />
                             <x-select-image :images="$images" name="image3" />
                             <x-select-image :images="$images" name="image4" />
+                            <x-select-image :images="$images" name="image5" /><!-- 最後だけおかしくなるので、5を作って、非表示で対応 -->
                             <div class="p-2 w-full flex justify-around mt-4">
                                 <button type="button" onclick="location.href='{{ route('owner.products.index') }}'" class="bg-gray-200 border-0 py-2 px-8 focus:outline-none hover:bg-gray-400 rounded text-lg">戻る</button>
                                 <button type="submit" class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">登録する</button>

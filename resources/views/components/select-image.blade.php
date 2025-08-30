@@ -1,8 +1,10 @@
 @php
+    $hidden = false;
     if($name === 'image1'){ $modal = 'modal-1'; }
     if($name === 'image2'){ $modal = 'modal-2'; }
     if($name === 'image3'){ $modal = 'modal-3'; }
     if($name === 'image4'){ $modal = 'modal-4'; }
+    if($name === 'image5'){ $modal = 'modal-5';  $hidden = true; }
 @endphp
 <div class="modal micromodal-slide" id="{{ $modal }}" aria-hidden="true">
     <div class="modal__overlay" tabindex="-1" data-micromodal-close>
@@ -36,7 +38,7 @@
     </div>
 </div>
 
-<div class="flex justify-around items-center mb-4">
+<div class="flex justify-around items-center mb-4 {{ $hidden? 'hidden' : '' }}">
     <a data-micromodal-trigger="{{ $modal }}" href='javascript:;'>ファイルを選択</a>
     <div class="w-1/4">
         <img id="{{ $name }}_thumbnail" src="">
