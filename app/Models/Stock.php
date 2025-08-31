@@ -11,4 +11,10 @@ class Stock extends Model
 
     // テーブル名を変える
     protected $table = 't_stocks';
+
+    protected $fillable = [
+        'product_id',
+        'type',
+        'quantity'
+    ];
 }
