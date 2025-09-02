@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Owner;
 
+use App\Constants\Common;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Image;
@@ -205,11 +206,11 @@ class ProductController extends Controller
                     $product->save();
 
                     // 在庫変更処理
-                    if($request->type === '1') {
+                    if($request->type === \Constant::PRODUCT_LIST['add']) {
                         $newQuantity = $request->quantity;
                     }
 
-                    if($request->type === '2') {
+                    if($request->type === \Constant::PRODUCT_LIST['reduce']) {
                         $newQuantity = $request->quantity * -1;
                     }
 
