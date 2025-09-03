@@ -34,6 +34,9 @@
             <main>
                 {{ $slot }}
             </main>
+
+            {{-- ✅ ページ固有のスクリプトを読み込む場所 --}}
+            @stack('scripts')
         </div>
     </body>
 </html>
