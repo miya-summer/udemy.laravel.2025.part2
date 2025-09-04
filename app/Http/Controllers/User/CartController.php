@@ -67,12 +67,16 @@ class CartController extends Controller
                 // 在庫が足りないので、買えないので、indexに戻す
                 return view('user.cart.index');
             } else {
-                // stripeに渡す内容は決まっているので、詳細はstripeのサイトで確認
-                $line_item = [
-                    'name' => $product->name,
-                    'description' => $product->information,
-                    'amount' => $product->price,
-                    'currency' => 'jpy',
+                // stripeに渡す内容は決まっているので、詳細はstripeのサイトで確認（新しいVerだと記述方法が変わったみたい）
+                $line_item[] = [
+                    'price_data' => [
+                        'currency' => 'jpy',
+                        'product_data' => [
+                            'name' => $product->name,
+                            'description' => $product->information,
+                        ],
+                        'unit_amount' => $product->price,
+                    ],
                     'quantity' => $product->pivot->quantity,
                 ];
                 array_push($line_items, $line_item);
@@ -90,17 +94,17 @@ class CartController extends Controller
             ]);
         }
 
-        dd('test');
+//        dd('test');
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
         $checkout_session = \Stripe\Checkout\Session::create([
-            'line_items' => [$line_items],
+            'line_items' => $line_items,
             'mode' => 'payment',
             'success_url' => route('user.items.index'),
             'cancel_url' => route('user.cart.index'),
         ]);
 
-        $publicKey = env('STRIPE_SECRET_KEY');
+        $publicKey = env('STRIPE_PUBLIC_KEY');
 
         return view('user.checkout', compact('checkout_session','publicKey'));
     }
