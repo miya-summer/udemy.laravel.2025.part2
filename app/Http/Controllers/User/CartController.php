@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\User;
+use App\Models\Stock;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
@@ -58,19 +59,38 @@ class CartController extends Controller
         $products = $user->products; // 多対多のリレーション
         $line_items = [];
 
-        foreach($products as $product){
-            // stripeに渡す内容は決まっているので、詳細はstripeのサイトで確認
-            $line_item = [
-                'name' => $product->name,
-                'description' => $product->information,
-                'amount' => $product->price,
-                'currency' => 'jpy',
-                'quantity' => $product->pivot->quantity,
-            ];
-            array_push($line_items, $line_item);
+        foreach($products as $product) {
+            // 在庫確認し決済前に在庫を減らしておく
+            $quantity = Stock::where('product_id', $product->id)->sum('quantity');
+
+            if ($product->pivot->quantity > $quantity) {
+                // 在庫が足りないので、買えないので、indexに戻す
+                return view('user.cart.index');
+            } else {
+                // stripeに渡す内容は決まっているので、詳細はstripeのサイトで確認
+                $line_item = [
+                    'name' => $product->name,
+                    'description' => $product->information,
+                    'amount' => $product->price,
+                    'currency' => 'jpy',
+                    'quantity' => $product->pivot->quantity,
+                ];
+                array_push($line_items, $line_item);
+            }
         }
 
 //        dd($line_items);
+
+        // 決済処理の前に購入された分の在庫を減らしておく
+        foreach ($products as $product) {
+            Stock::create([
+                'product_id' => $product->id,
+                'type' => \Constant::PRODUCT_LIST['reduce'],
+                'quantity' => $product->pivot->quantity * -1
+            ]);
+        }
+
+        dd('test');
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
         $checkout_session = \Stripe\Checkout\Session::create([
