@@ -27,7 +27,7 @@ class ItemController extends Controller
         });
     }
 
-    public function index()
+    public function index(Request $request)
     {
 //        [SQL]
 //        SELECT `product_id`, sum(`quantity`) as `quantity`
@@ -60,7 +60,9 @@ class ItemController extends Controller
 //                ,'image1.filename as filename')
 //            ->get();
 
-        $products = Product::availableItems()->get();
+        $products = Product::availableItems()
+            ->sortOrder($request->sort)
+            ->get();
 //        dd($stocks, $products);
 
 //        $products = Product::all();
