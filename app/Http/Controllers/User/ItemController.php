@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
@@ -13,6 +14,17 @@ class ItemController extends Controller
     public function __construct()
     {
         $this->middleware('auth:users');
+
+        $this->middleware(function($request, $next){
+            $id = $request->route()->parameter('item');
+            if(!is_null($id)){
+                $itemId = Product::availableItems()->where('products.id', $id)->exists();
+                if(!$itemId){
+                    abort(404); // 404画面表示
+                }
+            }
+            return $next($request);
+        });
     }
 
     public function index()
