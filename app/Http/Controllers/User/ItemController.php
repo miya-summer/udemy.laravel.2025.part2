@@ -9,6 +9,8 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\PrimaryCategory;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
 
 class ItemController extends Controller
 {
@@ -30,6 +32,10 @@ class ItemController extends Controller
 
     public function index(Request $request)
     {
+        // テストメール
+        Mail::to('test@example.com')
+            ->send(new TestMail());
+
 //        dd($request);
 //        [SQL]
 //        SELECT `product_id`, sum(`quantity`) as `quantity`
