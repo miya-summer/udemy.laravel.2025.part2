@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\PrimaryCategory;
 
 class ItemController extends Controller
 {
@@ -29,6 +30,7 @@ class ItemController extends Controller
 
     public function index(Request $request)
     {
+//        dd($request);
 //        [SQL]
 //        SELECT `product_id`, sum(`quantity`) as `quantity`
 //        FROM `t_stocks`
@@ -61,12 +63,15 @@ class ItemController extends Controller
 //            ->get();
 
         $products = Product::availableItems()
+            ->selectCategory($request->category ?? '0')
             ->sortOrder($request->sort)
             ->paginate($request->pagination ?? '20');
 //        dd($stocks, $products);
 
+        $categories = PrimaryCategory::with('secondary')->get();
+
 //        $products = Product::all();
-        return view('user.index', compact('products'));
+        return view('user.index', compact('products', 'categories'));
     }
 
     public function show($id){
