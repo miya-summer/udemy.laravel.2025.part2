@@ -38,7 +38,7 @@ class ItemController extends Controller
 //            ->send(new TestMail());
 
         // 非同期で送信
-        SendThanksMail::dispatch();
+//        SendThanksMail::dispatch();
 
 //        dd($request);
 //        [SQL]
