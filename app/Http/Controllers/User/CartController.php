@@ -10,6 +10,7 @@ use App\Models\Stock;
 use Illuminate\Support\Facades\Auth;
 use App\Services\CartService;
 use App\Jobs\SendThanksMail;
+use App\Jobs\SendOrderedMail;
 
 class CartController extends Controller
 {
@@ -62,7 +63,13 @@ class CartController extends Controller
         $products = CartService::getItemsInCart($items);
         $user = User::findOrFail(Auth::id());
         SendThanksMail::dispatch($products, $user);
-        dd('ユーザーメール送信テスト');
+        foreach ($products as $product){
+            // 無料のmailtrapだと送信に制限があるのでエラーになるので、強制的に60秒ずらして送るようにしてみる。
+//            SendOrderedMail::dispatch($product, $user);
+            SendOrderedMail::dispatch($product, $user)->delay(now()->addSeconds(60));
+        }
+//        dd('ユーザーメール送信テスト');
+
         ////
         $user = User::findOrFail(Auth::id());
         $products = $user->products; // 多対多のリレーション
